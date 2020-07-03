@@ -1,0 +1,46 @@
+import axios from 'axios'
+
+const url ='https://covid19.mathdro.id/api'
+
+export const fetchData=async (country)=>{
+    let changeUlr=url
+
+    if(country){
+        changeUlr=`${url}/countries/${country}`
+    }else{
+        changeUlr =url
+    }
+    try {
+        // Destructing irá pegar somente 5 atributos do arquivo JSON da URL
+        const { data: { confirmed, recovered, deaths, lastUpdate}}=await axios.get(changeUlr)
+        // Irá retornar somente os atributos especificados
+        return { confirmed, recovered, deaths, lastUpdate }
+    } catch (error) {
+        console.log('Error no fetchData \n',error)
+    }
+}
+
+export const fetchDailyData = async () => {
+    try {
+        const {data}=await axios.get(`${url}/daily`)
+        const modifiedDailyData=data.map((dailyData)=>({
+            confirmed:dailyData.confirmed.total,
+            deaths:dailyData.deaths.total,
+            date:dailyData.reportDate,
+
+        }))
+        return modifiedDailyData
+    } catch (error) {
+        
+    }
+}
+
+export const fetchCountries=async ()=>{
+    try {
+        const {data:{countries}}=await axios.get(`${url}/countries`)
+        // console.log('Pais: ',countries)
+        return countries.map((country)=>country.name)
+    } catch (error) {
+        console.log(error)
+    }
+}

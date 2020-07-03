@@ -1,0 +1,18 @@
+.container{
+    margin: 40px 0;
+}
+
+.card{
+    margin-right:3px !important;
+}
+.infectados{
+    border-bottom: solid 9px rgba(0, 0, 255, 0.459);
+}
+.recuperados{
+    border-bottom: solid 9px rgb(93, 156, 93);
+    
+}
+
+.mortos{
+    border-bottom: solid 9px rgba(255, 0, 0, 0.5);
+}

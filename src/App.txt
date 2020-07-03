@@ -1,0 +1,43 @@
+------------------APP.JS-------------------------------------------------------------------------------
+
+import React,{Component} from 'react'
+import ReactDom from 'react-dom'
+
+import Cards from './components/Cards/Cards'
+import Chart from './components/Chart/Chart'
+import CountryPicker from './components/CountryPicker/CountryPicker'
+
+import style from'./App.module.css'
+
+import {fetchData} from './api'
+export default class App extends Component{
+    state={
+        data:{},
+        country:''
+    }
+    // Sempre que um componente for montado irá executar essa função
+    async componentDidMount(){
+        const fetchedData=await fetchData()
+        this.setState({ data: fetchedData})
+    }
+
+    handlePicker=async (country)=>{
+        const fetchedData=await fetchData(country)
+        this.setState({ data: fetchedData, country:country })
+    }
+    render(){
+        const {data,country}=this.state
+        return(
+            <div className={style.princ}>
+                <Cards data={data}/>
+                <CountryPicker handlePicker={this.handlePicker}/>
+                <Chart data={data} country={country}/>
+            </div>
+        )
+    }
+}
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+

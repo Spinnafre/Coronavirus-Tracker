@@ -1,0 +1,80 @@
+import React, { useState, useEffect } from 'react'
+import { Line, Bar } from 'react-chartjs-2'
+
+import { fetchDailyData } from '../../api'
+import styles from './Chart.module.css'
+const Chart = ({ data: { confirmed, recovered, deaths }, country }) => {
+    const [dailyData, setDailyData] = useState([])
+
+    /*Toda vez que houver a atualização do componente,
+    remover o componente e quando o componente for atualizado
+    irá ser executado a função.
+    */
+    useEffect(() => {
+        const fetchAPI = async () => {
+            const dateFormated = await fetchDailyData()
+            setDailyData(dateFormated)
+        }
+        // console.log(dailyData)
+        fetchAPI()
+    },[])
+
+
+    const lineChart = (
+        dailyData.length ? (
+            <Line
+                data={{
+                    // Está pegando as datas e adicionando nos labels do gráfico, mostrando as datas no linha do gráfico.
+                    labels: dailyData.map(({ date }) => date),
+                    datasets: [
+                        {
+                            data: dailyData.map(({ confirmed }) => confirmed),
+                            label: 'Infectados',
+                            borderColor: '#3333ff',
+                            backgroundColor: 'rgba(51, 51, 255,0.1)',
+                            fill: true
+                        },
+                        {
+                            data: dailyData.map(({ deaths }) => deaths),
+                            label: 'Mortos',
+                            // borderColor: 'red',
+                            backgroundColor: 'rgba(255,0,0,0.5)',
+                            fill: true
+                        }
+                    ]
+                }}
+            />) : null
+    )
+
+    const barChart = (
+        confirmed ?
+            <Bar
+                data={{
+                    labels: ['Infectados', 'Recuperados', 'Mortos'],
+                    datasets: [{
+                        label: 'Pessoas',
+                        backgroundColor: [
+                            'rgba(0,0,255,0.5)',
+                            'rgba(0,255,0,0.5)',
+                            'rgba(255,0,0,0.5)'],
+                        data: [confirmed.value, recovered.value, deaths.value]
+                    }]
+                }}
+                option={{
+                    legend:{display:false},
+                    title:{display:true,text:`Estado Atual ${country}`}
+                }}
+            />
+            : null
+
+    )
+
+
+    return (
+        <div className={styles.container}>
+            {country ? barChart:lineChart}
+        </div>
+    )
+}
+
+export default Chart
